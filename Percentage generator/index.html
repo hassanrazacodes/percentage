@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Grade Calculator</title>
+  <style>
+    /* Basic styling for the body */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f9;
+      color: #333;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      transition: background-color 0.3s ease-in-out;
+    }
+
+    /* Landing Screen Animation */
+    #landingScreen {
+      text-align: center;
+      opacity: 0;
+      animation: fadeIn 2s forwards;
+    }
+
+    h1 {
+      font-size: 32px;
+      margin-bottom: 20px;
+      color: #007bff;
+    }
+
+    /* Heading Styling */
+    .message {
+      font-size: 24px;
+      color: #333;
+      margin-bottom: 20px;
+      animation: slideIn 1.5s forwards;
+    }
+
+    /* Animation for fade-in */
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    /* Animation for slide-in effect */
+    @keyframes slideIn {
+      from {
+        transform: translateY(50px);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    /* Start button styling */
+    #startButton {
+      background-color: #007bff;
+      color: #fff;
+      padding: 15px 30px;
+      font-size: 18px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.3s ease;
+    }
+
+    #startButton:hover {
+      background-color: #0056b3;
+      transform: scale(1.1);
+    }
+
+    /* Form styling */
+    form {
+      display: none; /* Initially hidden */
+      margin-top: 30px;
+      padding: 20px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      background-color: #fff;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 14px;
+      transition: border-color 0.3s ease;
+    }
+
+    input:focus {
+      border-color: #007bff;
+      outline: none;
+    }
+
+    button {
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background-color 0.3s ease, transform 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+      transform: scale(1.05);
+    }
+
+    /* Table styling */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: center;
+    }
+
+    th {
+      background-color: #007bff;
+      color: #fff;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+
+    tr:hover {
+      background-color: #e2f0fe;
+    }
+
+    .buttons-container {
+      margin-top: 20px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .buttons-container button {
+      background-color: #28a745;
+    }
+
+    .buttons-container button.share-btn {
+      background-color: #25D366;
+    }
+  </style>
+</head>
+<body>
+  <!-- Landing Screen (Hidden initially) -->
+  <div id="landingScreen">
+    <h1>Welcome to Grade Calculator</h1>
+    <p class="message">Do you want to calculate your grade?</p>
+    <button id="startButton" onclick="startCalculation()">Start</button>
+  </div>
+
+  <!-- Grade Calculator Form (Initially hidden) -->
+  <div id="calculatorScreen" style="display: none;">
+    <form id="gradeForm">
+      <label for="name">Name:</label>
+      <input type="text" id="name" placeholder="Enter your name" required>
+      
+      <label for="obtainedMarks">Obtained Marks:</label>
+      <input type="number" id="obtainedMarks" placeholder="Enter obtained marks" required>
+      
+      <label for="totalMarks">Total Marks:</label>
+      <input type="number" id="totalMarks" placeholder="Enter total marks" required>
+      
+      <button type="button" onclick="calculateGrade()">Submit</button>
+    </form>
+
+    <h2>Result Table</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Percentage</th>
+          <th>Grade</th>
+        </tr>
+      </thead>
+      <tbody id="resultTable">
+        <!-- Dynamic rows will be added here -->
+      </tbody>
+    </table>
+
+    <div class="buttons-container">
+      <button onclick="downloadResult()">Download Result</button>
+      <button class="share-btn" onclick="shareResult()">Share Result</button>
+    </div>
+  </div>
+
+  <script>
+    function startCalculation() {
+      // Hide the landing screen and show the calculator form
+      document.getElementById('landingScreen').style.display = 'none';
+      document.getElementById('calculatorScreen').style.display = 'block';
+
+      // Show the form
+      const form = document.getElementById('gradeForm');
+      form.style.display = 'block'; // Make sure the form is visible
+    }
+
+    function calculateGrade() {
+      const name = document.getElementById('name').value;
+      const obtainedMarks = Number(document.getElementById('obtainedMarks').value);
+      const totalMarks = Number(document.getElementById('totalMarks').value);
+
+      if (!name || obtainedMarks === '' || totalMarks === '' || totalMarks === 0) {
+        alert('Please fill all fields correctly!');
+        return;
+      }
+
+      const percentage = (obtainedMarks / totalMarks) * 100;
+      let grade;
+
+      // Determine grade based on percentage
+      if (percentage >= 90) {
+        grade = 'A+';
+      } else if (percentage >= 80) {
+        grade = 'A';
+      } else if (percentage >= 70) {
+        grade = 'B';
+      } else if (percentage >= 60) {
+        grade = 'C';
+      } else if (percentage >= 50) {
+        grade = 'D';
+      } else {
+        grade = 'F';
+      }
+
+      // Add result to the table
+      const resultTable = document.getElementById('resultTable');
+      const newRow = resultTable.insertRow();
+
+      const cell1 = newRow.insertCell(0);
+      const cell2 = newRow.insertCell(1);
+      const cell3 = newRow.insertCell(2);
+
+      cell1.textContent = name;
+      cell2.textContent = percentage.toFixed(2) + '%';
+      cell3.textContent = grade;
+
+      // Clear the form for the next entry
+      document.getElementById('gradeForm').reset();
+    }
+
+    function downloadResult() {
+      const resultText = document.getElementById('resultTable').innerText;
+      const blob = new Blob([resultText], { type: 'text/plain' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = 'result.txt';
+      link.click();
+    }
+
+    function shareResult() {
+      const resultText = document.getElementById('resultTable').innerText;
+      const message = encodeURIComponent(resultText);
+      const whatsappUrl = `https://wa.me/?text=${message}`;
+      window.open(whatsappUrl, '_blank');
+    }
+  </script>
+</body>
+</html>
